@@ -2,16 +2,9 @@ import pygame
 from pygame.locals import *
 import time
 import random
+from enum import Enum
 # shortest tree
-class Node : 
-    counter = 0
-    def __init__(self,data):
-        self.data = data
-        self.left = None
-        self.bottom = None
-        self.right = None
-        Node.counter += 1
-        self.path_id = Node.counter
+
 
 # class Tree :
 #     def __init__(self) : 
@@ -89,13 +82,22 @@ class Node :
 #         path[0] = path[0] - start.data
 #         path[1].pop(path[1].__len__()-1)
 #         return fixedPath
+class Node : 
+    counter = 0
+    def __init__(self,data):
+        self.data = data
+        self.left = None
+        self.bottom = None
+        self.right = None
+        Node.counter += 1
+        self.path_id = Node.counter
 class Game:
     def __init__(self,size=8):
         self.pixel = 60
         pygame.init()
         pygame.display.set_caption("Snake Labyrinth")
         self.map = [
-                    [Node(5),Node(1),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
+                    [Node(5),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
                     [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
                     [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
                     [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
@@ -112,10 +114,27 @@ class Game:
         # Changing window color
         self.display.fill(color)
         # buat visual petanya 
-        # buat snake
-        self.snake = Snake(self.display)
+        # buat snake dan cari letak snake
+        letakSnake = 0
+        row = None
+        col = None
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                if self.map[i][j].data == 5:
+                    letakSnake = self.map[i][j].path_id
+                    row = i
+                    col = j
+
+        self.snake = Snake(self.display,letakSnake,row,col)
+        pygame.display.flip()
         self.drawMap()
-        # self.play(True)
+        self.play()
+    
+    def printMap(self):
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                print(self.map[i][j].data, end=" ")
+            print('')
     
     def drawMap(self):
         for atas in range (len(self.map)):
@@ -131,35 +150,38 @@ class Game:
                 elif self.map[atas][kiri].data == 3: #kalo end : tujuan /apple
                     self.draw_land(atas * self.pixel ,kiri * self.pixel )
                     self.draw_apple(atas * self.pixel ,kiri * self.pixel )
-
-
-        pygame.display.flip()
-        self.play()
+        pygame.display.update()
         
 
     def play(self):
         running = True
         while running:
             for event in pygame.event.get():
-                if event.type == KEYDOWN:
+                if event.type == QUIT:
+                    running = False
+                    print('berhenti')
+
+                elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
+                        print('berhenti 1')
                         running = False
 
-                    # if not pause:
-                    #     if event.key == K_LEFT:
-                    #         pass
-
-                    #     if event.key == K_RIGHT:
-                    #         pass
+                    elif event.key == K_LEFT:
+                        self.snake.move_left(self.map)
+                        print('kiri')
+                        print(self.snake.path)
+                        self.drawMap()
+                    elif event.key == K_RIGHT:
+                        self.snake.move_right(self.map)
+                        print('kanan')
+                        print(self.snake.path)
+                        self.drawMap()
 
                     #     if event.key == K_UP:
                     #         pass
 
                     #     if event.key == K_DOWN:
                     #         pass
-
-                elif event.type == QUIT:
-                    running = False
             time.sleep(.1)
     
     def draw_wall(self,atas,kiri):
@@ -174,15 +196,119 @@ class Game:
     def draw_land(self,atas,kiri): #tujuan
         image = pygame.image.load("snakegame/resources/land60x60.jpg").convert()
         self.display.blit(image,(kiri,atas))
-    
+
+class Face(Enum):
+    LEFT = 1
+    RIGHT = 2
+    UP = 3
+    DOWN = 4
 class Snake:
-    def __init__(self,display):
+    def __init__(self,display,path_id,row,col):
+        self.row = row
+        self.col = col
+        self.path = [path_id]
         self.display = display
-        self.image = pygame.image.load("snakegame/resources/snake60x60.png").convert()
+        self.position = None
+        # self.position = Face.DOWN #pilihan : LEFT,RIGHT,UP,DOWN
+        # if self.position == Face.UP:
+        #     self.image = pygame.image.load(self.snakeUp()).convert()
+        self.image = self.snakeDown()
         self.image.set_colorkey((0, 0, 0))
-        self.position = 'DOWN' #pilihan : LEFT,RIGHT,UP,DOWN
+
     def draw(self,atas,kiri):
         self.display.blit(self.image,(kiri,atas))
+    
+    def move_right(self,map):
+        self.image = self.snakeRight()
+        self.image.set_colorkey((0, 0, 0))
+        # TODO animasi ke kanan
+
+        if map[self.row][self.col+1].data == 0: #kalo boleh dilewati
+            map[self.row][self.col].data = 0
+            self.col +=1
+            map[self.row][self.col].data = 5
+            #kalau misal snake e mundur ke tempat sebelumnya
+            if self.path[len(self.path) - 2] == map[self.row][self.col].path_id:
+                self.path.pop()
+            else:
+                self.path.append(map[self.row][self.col].path_id)
+        return map
+    
+    def move_left(self,map):
+        self.image = self.snakeLeft()
+        self.image.set_colorkey((0, 0, 0))
+        # TODO animasi ke kanan
+
+        if map[self.row][self.col-1].data == 0: #kalo boleh dilewati
+            map[self.row][self.col].data = 0
+            self.col -=1
+            map[self.row][self.col].data = 5
+            #kalau misal snake e mundur ke tempat sebelumnya
+            if self.path[len(self.path) - 2] == map[self.row][self.col].path_id:
+                self.path.pop()
+            else:
+                self.path.append(map[self.row][self.col].path_id)
+        return map
+        
+    def move_down(self,map):
+        self.image = self.snakeDown()
+        self.image.set_colorkey((0, 0, 0))
+        # TODO animasi ke kanan
+
+        if map[self.row][self.col+1].data == 0: #kalo boleh dilewati
+            map[self.row][self.col].data = 0
+            self.row +=1
+            map[self.row][self.col].data = 5
+            #kalau misal snake e mundur ke tempat sebelumnya
+            if self.path[len(self.path) - 2] == map[self.row][self.col].path_id:
+                self.path.pop()
+            else:
+                self.path.append(map[self.row][self.col].path_id)
+        return map
+
+    def move_up(self,map):
+        self.image = self.snakeUp()
+        self.image.set_colorkey((0, 0, 0))
+        # TODO animasi ke kanan
+
+        if map[self.row][self.col+1].data == 0: #kalo boleh dilewati
+            map[self.row][self.col].data = 0
+            self.row -=1
+            map[self.row][self.col].data = 5
+            #kalau misal snake e mundur ke tempat sebelumnya
+            if self.path[len(self.path) - 2] == map[self.row][self.col].path_id:
+                self.path.pop()
+            else:
+                self.path.append(map[self.row][self.col].path_id)
+        return map
+
+    def face(self,direction):
+        self.position = direction
+    
+    def snakeRight(self):
+        right_img =pygame.image.load("snakegame/resources/snake60x60.png").convert()
+        right_img =  pygame.transform.rotate(right_img, 270)
+        self.face(Face.RIGHT)
+        return right_img
+        #harus di return soalnya dia cmn image blm di load. 
+
+    def snakeLeft(self):
+        left_img =pygame.image.load("snakegame/resources/snake60x60.png").convert()
+        left_img =  pygame.transform.rotate(left_img, 90)
+        self.face(Face.LEFT)
+        return left_img
+        
+    def snakeDown(self):
+        down_img =pygame.image.load("snakegame/resources/snake60x60.png").convert()
+        down_img =  pygame.transform.rotate(down_img, 180)
+        self.face(Face.DOWN)
+        return down_img
+        
+    def snakeUp(self):
+        # up_img = pygame.image.load("snakegame/resources/snake60x60.png").convert()
+        up_img =  pygame.transform.rotate(pygame.image.load("snakegame/resources/snake60x60.png").convert(), 0)
+        self.face(Face.UP)
+        return up_img
         
        
 # t = Tree()
@@ -191,3 +317,4 @@ class Snake:
 # print(t.fastest(t.root)[0])
 # print(t.fastest(t.root)[1])
 game = Game()
+pygame.quit()
