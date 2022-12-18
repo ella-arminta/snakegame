@@ -94,6 +94,7 @@ class Snake:
         pass
 class Game:
     def __init__(self,size=8):
+        self.pixel = 60
         pygame.init()
         pygame.display.set_caption("Snake Labyrinth")
         self.map = [
@@ -108,7 +109,7 @@ class Game:
                     ]
         
         # buat windownya
-        self.display = pygame.display.set_mode((40 * size,40*size))   
+        self.display = pygame.display.set_mode((self.pixel  * size,self.pixel *size))   
         # Initialing RGB Color 
         color = (255, 255, 255)
         # Changing window color
@@ -122,13 +123,14 @@ class Game:
         for atas in range (len(self.map)):
             for kiri in range (len(self.map[atas])):
                 if self.map[atas][kiri].data == 5 : #kalo 5 = snake
-                    self.draw_snake(atas * 40,kiri * 40)
+                    self.draw_snake(atas * self.pixel ,kiri * self.pixel )
                 elif self.map[atas][kiri].data == 0: #kalo 0 : boleh di lewati
-                    self.draw_land(atas * 40,kiri * 40)
+                    # self.draw_land(atas * self.pixel ,kiri * self.pixel )
+                    pass
                 elif self.map[atas][kiri].data == 1: #kalo tembok : gk boleh di lewati
-                    self.draw_wall(atas * 40,kiri * 40)
+                    self.draw_wall(atas * self.pixel ,kiri * self.pixel )
                 elif self.map[atas][kiri].data == 3: #kalo end : tujuan /apple
-                    self.draw_apple(atas * 40,kiri * 40)
+                    self.draw_apple(atas * self.pixel ,kiri * self.pixel )
 
 
         pygame.display.flip()
@@ -161,19 +163,21 @@ class Game:
             time.sleep(.1)
     
     def draw_snake(self,atas,kiri):
-        image = pygame.image.load("snakegame/resources/snake.png").convert()
+        image = pygame.image.load("snakegame/resources/snake60x60.png").convert()
+        image.set_colorkey((0, 0, 0))
         self.display.blit(image,(kiri,atas))
 
     def draw_wall(self,atas,kiri):
-        image = pygame.image.load("snakegame/resources/wall.png").convert()
+        image = pygame.image.load("snakegame/resources/wall60x60.png").convert()
         self.display.blit(image,(kiri,atas))
     
     def draw_apple(self,atas,kiri): #tujuan
-        image = pygame.image.load("snakegame/resources/apple.jpg").convert()
+        image = pygame.image.load("snakegame/resources/apple60x60.png").convert()
+        image.set_colorkey((0, 0, 0))
         self.display.blit(image,(kiri,atas))
 
     def draw_land(self,atas,kiri): #tujuan
-        image = pygame.image.load("snakegame/resources/land.jpg").convert()
+        image = pygame.image.load("snakegame/resources/land60x60.jpg").convert()
         self.display.blit(image,(kiri,atas))
     
         
