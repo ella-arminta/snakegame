@@ -89,9 +89,6 @@ class Node :
 #         path[0] = path[0] - start.data
 #         path[1].pop(path[1].__len__()-1)
 #         return fixedPath
-class Snake:
-    def __init__(self):
-        pass
 class Game:
     def __init__(self,size=8):
         self.pixel = 60
@@ -111,11 +108,12 @@ class Game:
         # buat windownya
         self.display = pygame.display.set_mode((self.pixel  * size,self.pixel *size))   
         # Initialing RGB Color 
-        color = (255, 255, 255)
+        color = (234,182,118)
         # Changing window color
         self.display.fill(color)
         # buat visual petanya 
-        
+        # buat snake
+        self.snake = Snake(self.display)
         self.drawMap()
         # self.play(True)
     
@@ -123,13 +121,15 @@ class Game:
         for atas in range (len(self.map)):
             for kiri in range (len(self.map[atas])):
                 if self.map[atas][kiri].data == 5 : #kalo 5 = snake
-                    self.draw_snake(atas * self.pixel ,kiri * self.pixel )
+                    self.draw_land(atas * self.pixel ,kiri * self.pixel )
+                    self.snake.draw(atas * self.pixel ,kiri * self.pixel )
                 elif self.map[atas][kiri].data == 0: #kalo 0 : boleh di lewati
-                    # self.draw_land(atas * self.pixel ,kiri * self.pixel )
+                    self.draw_land(atas * self.pixel ,kiri * self.pixel )
                     pass
                 elif self.map[atas][kiri].data == 1: #kalo tembok : gk boleh di lewati
                     self.draw_wall(atas * self.pixel ,kiri * self.pixel )
                 elif self.map[atas][kiri].data == 3: #kalo end : tujuan /apple
+                    self.draw_land(atas * self.pixel ,kiri * self.pixel )
                     self.draw_apple(atas * self.pixel ,kiri * self.pixel )
 
 
@@ -162,11 +162,6 @@ class Game:
                     running = False
             time.sleep(.1)
     
-    def draw_snake(self,atas,kiri):
-        image = pygame.image.load("snakegame/resources/snake60x60.png").convert()
-        image.set_colorkey((0, 0, 0))
-        self.display.blit(image,(kiri,atas))
-
     def draw_wall(self,atas,kiri):
         image = pygame.image.load("snakegame/resources/wall60x60.png").convert()
         self.display.blit(image,(kiri,atas))
@@ -180,7 +175,14 @@ class Game:
         image = pygame.image.load("snakegame/resources/land60x60.jpg").convert()
         self.display.blit(image,(kiri,atas))
     
-        
+class Snake:
+    def __init__(self,display):
+        self.display = display
+        self.image = pygame.image.load("snakegame/resources/snake60x60.png").convert()
+        self.image.set_colorkey((0, 0, 0))
+        self.position = 'DOWN' #pilihan : LEFT,RIGHT,UP,DOWN
+    def draw(self,atas,kiri):
+        self.display.blit(self.image,(kiri,atas))
         
        
 # t = Tree()
