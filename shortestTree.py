@@ -99,7 +99,7 @@ class Game:
         self.map = [
                     [Node(5),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
                     [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
-                    [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+                    [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
                     [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
                     [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
                     [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(3)],
@@ -177,11 +177,18 @@ class Game:
                         print(self.snake.path)
                         self.drawMap()
 
-                    #     if event.key == K_UP:
-                    #         pass
+                    elif event.key == K_UP:
+                        self.snake.move_up(self.map)
+                        print('atas')
+                        print(self.snake.path)
+                        self.drawMap()
 
-                    #     if event.key == K_DOWN:
-                    #         pass
+                    elif event.key == K_DOWN:
+                        self.snake.move_down(self.map)
+                        print('bawah')
+                        print(self.snake.path)
+                        self.drawMap()
+
             time.sleep(.1)
     
     def draw_wall(self,atas,kiri):
@@ -223,7 +230,7 @@ class Snake:
         self.image.set_colorkey((0, 0, 0))
         # TODO animasi ke kanan
 
-        if map[self.row][self.col+1].data == 0: #kalo boleh dilewati
+        if self.col < len(map[0])-1 and self.col > -1 and map[self.row][self.col+1].data == 0: #kalo boleh dilewati
             map[self.row][self.col].data = 0
             self.col +=1
             map[self.row][self.col].data = 5
@@ -239,7 +246,7 @@ class Snake:
         self.image.set_colorkey((0, 0, 0))
         # TODO animasi ke kanan
 
-        if map[self.row][self.col-1].data == 0: #kalo boleh dilewati
+        if self.col < len(map[0]) and self.col > 0 and map[self.row][self.col-1].data == 0: #kalo boleh dilewati
             map[self.row][self.col].data = 0
             self.col -=1
             map[self.row][self.col].data = 5
@@ -254,8 +261,9 @@ class Snake:
         self.image = self.snakeDown()
         self.image.set_colorkey((0, 0, 0))
         # TODO animasi ke kanan
-
-        if map[self.row][self.col+1].data == 0: #kalo boleh dilewati
+        print('ROW : ',self.row)
+        print(len(map))
+        if self.row < len(map)-1 and self.row > -1 and map[self.row+1][self.col].data == 0 : #kalo boleh dilewati
             map[self.row][self.col].data = 0
             self.row +=1
             map[self.row][self.col].data = 5
@@ -264,6 +272,9 @@ class Snake:
                 self.path.pop()
             else:
                 self.path.append(map[self.row][self.col].path_id)
+            # print('bawah 2')
+        # else:
+        #     print('gagal')
         return map
 
     def move_up(self,map):
@@ -271,7 +282,7 @@ class Snake:
         self.image.set_colorkey((0, 0, 0))
         # TODO animasi ke kanan
 
-        if map[self.row][self.col+1].data == 0: #kalo boleh dilewati
+        if self.row < len(map[0]) and self.row > 0 and map[self.row-1][self.col].data == 0: #kalo boleh dilewati
             map[self.row][self.col].data = 0
             self.row -=1
             map[self.row][self.col].data = 5
