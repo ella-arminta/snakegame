@@ -3,85 +3,11 @@ from pygame.locals import *
 import time
 import random
 from enum import Enum
+from sys import maxsize
+from collections import deque
 # shortest tree
 
 
-# class Tree :
-#     def __init__(self) : 
-#         self.root = None
-#         self.soal = [[Node(0),Node(4),Node(6),Node(8),Node(9)],
-#                     [Node(3),Node(2),Node(5),Node(1),Node(2)],
-#                     [Node(6),Node(2),Node(9),Node(9),Node(8)],
-#                     [Node(5),Node(1),Node(2),Node(3),Node(4)],
-#                     [Node(7),Node(8),Node(5),Node(3),Node(2)]]
-    
-#     def create_tree(self,start,end):
-#         self.root = self.soal[start[0]][start[1]]
-#         dest = self.soal[end[0]][end[1]]
-#         self.create_tree_util(start,dest)
-    
-    
-#     def create_tree_util(self,start,dest):
-#         x = start[1] - 1 #kenapa minus 1?
-#         y = start[0] + 1
-#         cond = False
-#         if y > 4:
-#             return False
-#         for i in range(3):
-#             if x < 0 or x > 4:
-#                 x+=1
-#                 continue
-#             else : 
-#                 if(self.soal[y][x] == dest):
-#                     if(i == 0):
-#                         self.soal[start[0]][start[1]].left = self.soal[y][x]
-#                     elif i == 1 :
-#                         self.soal[start[0]][start[1]].bottom = self.soal[y][x]
-#                     elif i == 2 : 
-#                         self.soal[start[0]][start[1]].right = self.soal[y][x]
-#                     return True
-#                 else :
-#                     if (self.create_tree_util([y,x],dest)):
-#                         if(i == 0):
-#                             self.soal[start[0]][start[1]].left = self.soal[y][x]
-#                         elif i == 1 :
-#                             self.soal[start[0]][start[1]].bottom = self.soal[y][x]
-#                         elif i == 2 : 
-#                             self.soal[start[0]][start[1]].right = self.soal[y][x]
-#                         cond = True
-#                 x+=1
-#         return cond
-
-#     def print_all(self,start:Node,path:list = []):
-#         path.append(start.data)
-#         if start.left is not None:
-#             self.print_all(start.left,path)
-#         if start.bottom is not None:
-#             self.print_all(start.bottom,path)
-#         if start.right is not None:
-#             self.print_all(start.right,path)
-#         if start.left is None and start.bottom is None and start.right is None : 
-#             for i in path:
-#                 print(i,end ="-->")
-#             print()
-#         path.pop(path.__len__()-1)
-
-#     def fastest(self,start:Node,path:list = [0,[]],fixedPath = [0,[]]):
-#         path[1].append(start.data)
-#         path[0] = path[0]+start.data
-#         if start.left is not None:
-#             self.fastest(start.left,path,fixedPath)
-#         if start.bottom is not None:
-#             self.fastest(start.bottom,path,fixedPath)
-#         if start.right is not None:
-#             self.fastest(start.right,path,fixedPath)
-#         if start.left is None and start.bottom is None and start.right is None :
-#             if fixedPath[0] == 0 or fixedPath[0] > path[0] :
-#                 fixedPath[1] = path[1][:]
-#                 fixedPath[0] = path[0]
-#         path[0] = path[0] - start.data
-#         path[1].pop(path[1].__len__()-1)
-#         return fixedPath
 class Node : 
     counter = 0
     def __init__(self,data):
@@ -89,30 +15,170 @@ class Node :
         self.left = None
         self.bottom = None
         self.right = None
-        Node.counter += 1
         self.path_id = Node.counter
+        Node.counter += 1
+class Graph:
+    # src = https://www.geeksforgeeks.org/shortest-path-unweighted-graph/
+    def __init__(self,map,source,dest):
+        self.map = map
+        # array of vectors is used to store the graph in the form of an adjacency list
+        self.adj = [[] for i in range(len(self.map) * len(self.map[0]))]
+        self.shortesPaths = []
+        # create graph from map
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                if self.map[i][j].data != 1:
+                    # kalo punya kanan
+                    if j+1 < len(self.map[i]) and self.map[i][j+1].data != 1:
+                        self.add_edge(self.adj,self.map[i][j].path_id,self.map[i][j+1].path_id)
+             
+                    # kalo punya kiri
+                    if j-1 > -1 and self.map[i][j-1].data != 1:
+                        self.add_edge(self.adj,self.map[i][j].path_id,self.map[i][j-1].path_id)
+   
+                    # kalo punya bawah
+                    if i+1 < len(self.map) and self.map[i+1][j].data != 1:
+                        self.add_edge(self.adj,self.map[i][j].path_id,self.map[i+1][j].path_id)
+
+                    # kalo punya atas
+                    if i-1 > -1 and self.map[i-1][j].data != 1:
+                        self.add_edge(self.adj,self.map[i][j].path_id,self.map[i-1][j].path_id)
+        self.print_paths(self.adj,len(self.map) * len(self.map[0]),source,dest)
+        # self.printShortestDistance(self.adj, source, dest, len(self.map) * len(self.map[0]))
+    
+
+    def displayAjd(self):
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                print(self.map[i][j].data,end=" ")
+            print()
+
+    def printAdj(self):
+        for i in range(len(self.adj)):
+            for j in range(len(self.adj[i])):
+                print(self.map[i][j].path_id, end=" ")
+            print()
+
+    # utility function to form edge between two vertices source and dest
+    def add_edge(self,adj, src, dest):
+        # directed 
+        try:
+            adj[src].append(dest)
+        except IndexError:
+            print(src,' ',dest)
+
+   # Function which finds all the paths and stores it in paths array
+    def find_paths(self,paths, path, parent, n, u):
+        # Base Case
+        if (u == -1):
+            paths.append(path.copy())
+            return
+    
+        # Loop for all the parents of the given vertex
+        for par in parent[u]:
+    
+            # Insert the current vertex in path
+            path.append(u)
+    
+            # Recursive call for its parent
+            self.find_paths(paths, path, parent, n, par)
+    
+            # Remove the current vertex
+            path.pop()
+    
+    # Function which performs bfs from the given source vertex
+    def bfs(self,adj, parent, n, start) -> None:
+    
+        # dist will contain shortest distance from start to every other vertex
+        dist = [maxsize for _ in range(n)]
+        q = deque()
+    
+        # Insert source vertex in queue and make its parent -1 and distance 0
+        q.append(start)
+        parent[start] = [-1]
+        dist[start] = 0
+    
+        # Until Queue is empty
+        while q:
+            u = q[0]
+            q.popleft()
+            for v in adj[u]:
+                if (dist[v] > dist[u] + 1):
+    
+                    # A shorter distance is found So erase all the previous parents and insert new parent u in parent[v]
+                    dist[v] = dist[u] + 1
+                    q.append(v)
+                    parent[v].clear()
+                    parent[v].append(u)
+    
+                elif (dist[v] == dist[u] + 1):
+    
+                    # Another candidate parent for shortes path found
+                    parent[v].append(u)
+ 
+    # Function which prints all the paths from start to end
+    def print_paths(self,adj, n, start, end):
+        paths = []
+        path = []
+        parent = [[] for _ in range(n)]
+    
+        # Function call to bfs
+        self.bfs(adj, parent, n, start)
+    
+        # Function call to find_paths
+        self.find_paths(paths, path, parent, n, end)
+        print('Shortest Paths : ')
+        for v in paths:
+            temp = []
+            # Since paths contain each path in reverse order,so reverse it
+            v = reversed(v)
+            # Print node for the current path
+            for u in v:
+                print(u, end = " ")
+                temp.append(u)
+            self.shortesPaths.append(temp)
+            print()
+    
+    def getShortestPath(self):
+        return self.shortesPaths
+            
 class Game:
     def __init__(self,size=8):
         self.pixel = 60
         pygame.init()
         pygame.display.set_caption("Snake Labyrinth")
         self.map = [
-                    [Node(5),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
+                    [Node(0),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
                     [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
                     [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
                     [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
                     [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
-                    [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(3)],
+                    [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
                     [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
                     [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
                     ]
-        
+
+        # buat jalur tercepat
+        source = 0
+        dest = 47
+        for i in range(len(self.map)): #ngeset letak start dan end nya snake di map
+            for j in range(len(self.map[i])):
+                if self.map[i][j].path_id == source:
+                    self.map[i][j].data = 5
+                elif self.map[i][j].path_id == dest:
+                    self.map[i][j].data = 3
+        # source e path_id ke 0 dan end nya path_id ke 
+        self.graph = Graph(self.map,source,dest)
+        self.shortestPaths = self.graph.getShortestPath()
+
         # buat windownya
         self.display = pygame.display.set_mode((self.pixel  * size,self.pixel *size))   
+
         # Initialing RGB Color 
         color = (234,182,118)
         # Changing window color
         self.display.fill(color)
+
         # buat visual petanya 
         # buat snake dan cari letak snake
         letakSnake = 0
@@ -129,7 +195,7 @@ class Game:
         pygame.display.flip()
         self.drawMap()
         self.play()
-    
+        
     def printMap(self):
         for i in range(len(self.map)):
             for j in range(len(self.map[i])):
@@ -216,9 +282,6 @@ class Snake:
         self.path = [path_id]
         self.display = display
         self.position = None
-        # self.position = Face.DOWN #pilihan : LEFT,RIGHT,UP,DOWN
-        # if self.position == Face.UP:
-        #     self.image = pygame.image.load(self.snakeUp()).convert()
         self.image = self.snakeDown()
         self.image.set_colorkey((0, 0, 0))
 
@@ -321,11 +384,6 @@ class Snake:
         self.face(Face.UP)
         return up_img
         
-       
-# t = Tree()
-# t.create_tree([0,1],[4,2])
-# t.print_all(t.soal[0][1])
-# print(t.fastest(t.root)[0])
-# print(t.fastest(t.root)[1])
+
 game = Game()
 pygame.quit()
