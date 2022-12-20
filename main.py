@@ -471,26 +471,26 @@ class Snake:
         self.position = direction
     
     def snakeRight(self):
-        right_img = pygame.image.load("resources/snake60x60.png").convert()
-        right_img =  pygame.transform.rotate(right_img, 270)
+        right_img = pygame.image.load("resources/snake.png").convert()
+        right_img =  pygame.transform.rotate(right_img,90 )
         self.face(Face.RIGHT)
         return right_img
         #harus di return soalnya dia cmn image blm di load. 
 
     def snakeLeft(self):
-        left_img =pygame.image.load("resources/snake60x60.png").convert()
-        left_img =  pygame.transform.rotate(left_img, 90)
+        left_img =pygame.image.load("resources/snake.png").convert()
+        left_img =  pygame.transform.rotate(left_img, 270)
         self.face(Face.LEFT)
         return left_img
         
     def snakeDown(self):
-        down_img = pygame.image.load("resources/snake60x60.png").convert()
-        down_img =  pygame.transform.rotate(down_img, 180)
+        down_img = pygame.image.load("resources/snake.png").convert()
+        down_img =  pygame.transform.rotate(down_img,0 )
         self.face(Face.DOWN)
         return down_img
         
     def snakeUp(self):
-        up_img =  pygame.transform.rotate(pygame.image.load("resources/snake60x60.png").convert(), 0)
+        up_img =  pygame.transform.rotate(pygame.image.load("resources/snake.png").convert(), 180)
         self.face(Face.UP)
         return up_img
         
