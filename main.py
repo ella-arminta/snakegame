@@ -140,19 +140,19 @@ class Game:
         pygame.mixer.music.load('resources/bg_music_2.mp3')
         pygame.mixer.music.play(-1, 0)
         self.map = [
-                    [Node(0),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
+                    [Node(0),Node(1),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
                     [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
                     [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
-                    [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
-                    [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+                    [Node(1),Node(0),Node(1),Node(0),Node(0),Node(0),Node(1),Node(0)],
+                    [Node(0),Node(0),Node(0),Node(0),Node(1),Node(0),Node(0),Node(1)],
                     [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
-                    [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
-                    [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+                    [Node(1),Node(0),Node(1),Node(0),Node(0),Node(0),Node(0),Node(1)],
+                    [Node(1),Node(0),Node(0),Node(0),Node(1),Node(0),Node(0),Node(1)],
                     ]
 
         # buat jalur tercepat
         self.source = 0
-        self.dest = 47
+        self.dest = 63
         for i in range(len(self.map)): #ngeset letak start dan end nya snake di map
             for j in range(len(self.map[i])):
                 if self.map[i][j].path_id == self.source:
