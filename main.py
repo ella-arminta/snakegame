@@ -4,6 +4,7 @@ import time
 from enum import Enum
 from sys import maxsize
 from collections import deque
+import random
 
 class Node : 
     counter = 0
@@ -14,6 +15,7 @@ class Node :
 class Graph:
     def __init__(self,map,source,dest):
         self.map = map
+        Node.counter = 0
         # adjenct list
         self.adj = [[] for i in range(len(self.map) * len(self.map[0]))]
         self.shortesPaths = []
@@ -127,41 +129,28 @@ class Graph:
                 temp += str(path_id) + ' '
             self.shortesPaths.append(temp)
             print()
-        print(self.shortesPaths)
+        # print(self.shortesPaths)
     
     def getShortestPath(self):
-        return self.shortesPaths
+        if len(self.shortesPaths) == 0:
+            return 0
+        else : 
+            return self.shortesPaths
             
 class Game:
     def __init__(self,size=8):
         self.pixel = 60
         pygame.init()
         pygame.display.set_caption("Snake Labyrinth")
-        pygame.mixer.music.load('resources/bg_music_2.mp3')
-        pygame.mixer.music.play(-1, 0)
-        self.map = [
-                    [Node(0),Node(1),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
-                    [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
-                    [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
-                    [Node(1),Node(0),Node(1),Node(0),Node(0),Node(0),Node(1),Node(0)],
-                    [Node(0),Node(0),Node(0),Node(0),Node(1),Node(0),Node(0),Node(1)],
-                    [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
-                    [Node(1),Node(0),Node(1),Node(0),Node(0),Node(0),Node(0),Node(1)],
-                    [Node(1),Node(0),Node(0),Node(0),Node(1),Node(0),Node(0),Node(1)],
-                    ]
+        # pygame.mixer.music.load('resources/bg_music_2.mp3')
+        # pygame.mixer.music.play(-1, 0)
 
-        # buat jalur tercepat
-        self.source = 0
-        self.dest = 63
-        for i in range(len(self.map)): #ngeset letak start dan end nya snake di map
-            for j in range(len(self.map[i])):
-                if self.map[i][j].path_id == self.source:
-                    self.map[i][j].data = 5
-                elif self.map[i][j].path_id == self.dest:
-                    self.map[i][j].data = 3
-        # source e path_id ke 0 dan end nya path_id ke 
-        self.graph = Graph(self.map,self.source,self.dest)
-        self.shortestPaths = self.graph.getShortestPath()
+        self.randMap()
+        # if self.randMap() == 0:
+        #     self.randMap()
+        # print(self.map)
+        # print(self.dest)
+        # print(self.source)
 
         # buat windownya
         self.windowX = self.pixel  * size
@@ -190,6 +179,46 @@ class Game:
         self.drawMap()
         self.play()
         
+    def randMap(self):
+        self.map = [
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+        ]
+        # self.map = [
+        #        [Node(5),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
+        #             [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
+        #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
+        #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
+        #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+        #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
+        #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+        #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+        # ]
+        # buat jalur tercepat
+        self.source = 1
+        self.dest = 62
+        for i in range(len(self.map)): #ngeset letak start dan end nya snake di map
+            for j in range(len(self.map[i])):
+                if self.map[i][j].path_id == self.source:
+                    self.map[i][j].data = 5
+                    
+                elif self.map[i][j].path_id == self.dest:
+                    self.map[i][j].data = 3
+                    print(self.map[i][j].data, ' ',self.map[i][j].path_id )
+        self.printMap()
+        # source e path_id ke 0 dan end nya path_id ke 
+        self.graph = Graph(self.map,self.source,self.dest)
+        self.shortestPaths = self.graph.getShortestPath()
+        if self.shortestPaths == 0:
+            # return 0
+            self.randMap()
+
     def printMap(self):
         for i in range(len(self.map)):
             for j in range(len(self.map[i])):
