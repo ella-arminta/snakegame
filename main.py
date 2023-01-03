@@ -145,79 +145,88 @@ class Game:
         # pygame.mixer.music.load('resources/bg_music_2.mp3')
         # pygame.mixer.music.play(-1, 0)
 
-        self.randMap()
-        # if self.randMap() == 0:
-        #     self.randMap()
-        # print(self.map)
-        # print(self.dest)
-        # print(self.source)
+        # self.randMap(True)
 
-        # buat windownya
-        self.windowX = self.pixel  * size
-        self.windowY = self.pixel *size
-        self.display = pygame.display.set_mode((self.windowX,self.windowY))   
+        # # buat windownya
+        # self.windowX = self.pixel  * size
+        # self.windowY = self.pixel *size
+        # self.display = pygame.display.set_mode((self.windowX,self.windowY))   
 
-        # Initialing RGB Color 
-        color = (234,182,118)
-        # Changing window color
-        self.display.fill(color)
+        # # Initialing RGB Color 
+        # color = (234,182,118)
+        # # Changing window color
+        # self.display.fill(color)
 
-        # buat visual petanya 
-        # buat snake dan cari letak snake
-        letakSnake = 0
-        row = None
-        col = None
-        for i in range(len(self.map)):
-            for j in range(len(self.map[i])):
-                if self.map[i][j].data == 5:
-                    letakSnake = self.map[i][j].path_id
-                    row = i
-                    col = j
+        # # buat visual petanya 
+        # # buat snake dan cari letak snake
+        # letakSnake = 0
+        # row = None
+        # col = None
+        # for i in range(len(self.map)):
+        #     for j in range(len(self.map[i])):
+        #         if self.map[i][j].data == 5:
+        #             letakSnake = self.map[i][j].path_id
+        #             row = i
+        #             col = j
 
-        self.snake = Snake(self.display,letakSnake,row,col)
-        pygame.display.flip()
-        self.drawMap()
-        self.play()
+        # self.snake = Snake(self.display,letakSnake,row,col)
+        # pygame.display.flip()
+        # self.drawMap()
+        self.play(size,True)
         
-    def randMap(self):
-        self.map = [
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-            [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
-        ]
-        # self.map = [
-        #        [Node(5),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
-        #             [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
-        #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
-        #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
-        #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
-        #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
-        #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
-        #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
-        # ]
-        # buat jalur tercepat
-        self.source = 1
-        self.dest = 62
-        for i in range(len(self.map)): #ngeset letak start dan end nya snake di map
-            for j in range(len(self.map[i])):
-                if self.map[i][j].path_id == self.source:
-                    self.map[i][j].data = 5
-                    
-                elif self.map[i][j].path_id == self.dest:
-                    self.map[i][j].data = 3
-                    print(self.map[i][j].data, ' ',self.map[i][j].path_id )
-        self.printMap()
-        # source e path_id ke 0 dan end nya path_id ke 
-        self.graph = Graph(self.map,self.source,self.dest)
-        self.shortestPaths = self.graph.getShortestPath()
-        if self.shortestPaths == 0:
-            # return 0
-            self.randMap()
+    def randMap(self,bool):
+        if(bool == True):
+            self.map = [
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+                [Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1)),Node(random.randint(0, 1))],
+            ]
+            # self.map = [
+            #        [Node(5),Node(0),Node(0),Node(1),Node(1),Node(1),Node(1),Node(0)],
+            #             [Node(0),Node(0),Node(0),Node(0),Node(0),Node(0),Node(1),Node(0)],
+            #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(0)],
+            #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
+            #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+            #             [Node(0),Node(0),Node(1),Node(0),Node(1),Node(0),Node(1),Node(0)],
+            #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+            #             [Node(1),Node(0),Node(1),Node(0),Node(1),Node(0),Node(0),Node(1)],
+            # ]
+            # buat jalur tercepat
+            self.source = 1
+            self.dest = 62
+            for i in range(len(self.map)): #ngeset letak start dan end nya snake di map
+                for j in range(len(self.map[i])):
+                    if self.map[i][j].path_id == self.source:
+                        self.map[i][j].data = 5
+                        
+                    elif self.map[i][j].path_id == self.dest:
+                        self.map[i][j].data = 3
+                        print(self.map[i][j].data, ' ',self.map[i][j].path_id )
+            self.printMap()
+            # source e path_id ke 0 dan end nya path_id ke 
+            self.graph = Graph(self.map,self.source,self.dest)
+            self.shortestPaths = self.graph.getShortestPath()
+            if self.shortestPaths == 0:
+                # return 0
+                self.randMap(True)
+        else:
+            self.source = 1
+            self.dest = 62
+            for i in range(len(self.map)): #ngeset letak start dan end nya snake di map
+                for j in range(len(self.map[i])):
+                    if self.map[i][j].path_id == self.source:
+                        self.map[i][j].data = 5
+                        
+                    elif self.map[i][j].path_id == self.dest:
+                        self.map[i][j].data = 3
+                        print(self.map[i][j].data, ' ',self.map[i][j].path_id )
+            self.printMap()
+
 
     def printMap(self):
         for i in range(len(self.map)):
@@ -250,24 +259,16 @@ class Game:
 
         #buat tulisan y 
         font = pygame.font.Font('freesansbold.ttf', 32)
+        font2 = pygame.font.Font('freesansbold.ttf', 22)
         text = font.render('GAME OVER. YOU LOSE!', True, textcolor)
+        text2 = font2.render('Auto retry shortly after this', True, textcolor)
         textRect = text.get_rect()
+        textRect2 = text2.get_rect()
         textRect.center = (X // 2, Y // 2)
+        textRect2.center = (X // 1.7, Y // 1.8)
         self.display.blit(text, textRect)
+        self.display.blit(text2,textRect2)
         pygame.display.flip()
-        
-        
-
-   
-    
-            # if pygame.QUIT:
-    
-            #     # deactivates the pygame library
-            #     pygame.quit()
-    
-            #     # quit the program.
-            #     quit()
- 
        
     
     def benar(self):
@@ -286,6 +287,7 @@ class Game:
         textRect.center = (X // 2, Y // 2)
         self.display.blit(text, textRect)
         pygame.display.flip()
+        
                 
     def drawMap(self):
         for atas in range (len(self.map)):
@@ -304,9 +306,40 @@ class Game:
         pygame.display.update()
         
 
-    def play(self):
+    def play(self,size,bool):
+        pygame.mixer.music.load('resources/bg_music_2.mp3')
+        pygame.mixer.music.play(-1, 0)
+
+        self.randMap(bool)
+
+        # buat windownya
+        self.windowX = self.pixel  * size
+        self.windowY = self.pixel *size
+        self.display = pygame.display.set_mode((self.windowX,self.windowY))   
+
+        # Initialing RGB Color 
+        color = (234,182,118)
+        # Changing window color
+        self.display.fill(color)
+
+        # buat visual petanya 
+        # buat snake dan cari letak snake
+        letakSnake = 0
+        row = None
+        col = None
+        for i in range(len(self.map)):
+            for j in range(len(self.map[i])):
+                if self.map[i][j].data == 5:
+                    letakSnake = self.map[i][j].path_id
+                    row = i
+                    col = j
+
+        self.snake = Snake(self.display,letakSnake,row,col)
+        pygame.display.flip()
+        self.drawMap()
         running = True
         lanjut = True
+
         while running:
             if lanjut == False:
                 pygame.mixer.Sound.play(pygame.mixer.Sound('resources/ding.mp3'))
@@ -323,6 +356,8 @@ class Game:
                                 pause = False
                                 running = False
                                 print('berhenti')
+                                pygame.quit()
+                                exit()
                     
                         
                     
@@ -331,7 +366,9 @@ class Game:
                     pygame.mixer.Sound.play(pygame.mixer.Sound('resources/game_over.mp3'))
                     self.salah()
                     pause = True 
+                    count = 0
                     while pause:
+                        count+=1
                         self.salah()
                         time.sleep(.1)
                         for event in pygame.event.get():
@@ -339,11 +376,16 @@ class Game:
                                 pause = False
                                 running = False
                                 print('berhenti')
+
+                        if count == 10:
+                            self.play(size,False)
                     
             for event in pygame.event.get():
                 if event.type == QUIT:
                     running = False
                     print('berhenti')
+                    pygame.quit()
+                    exit()
 
                 elif event.type == KEYDOWN:
                     if event.key == K_ESCAPE:
