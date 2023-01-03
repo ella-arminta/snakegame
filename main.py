@@ -1,3 +1,10 @@
+# Kelompok 5:
+# Nathalia Devita Wijaya C14210009
+# Ella Arminta C14210109
+# Cilmara Ekia Benita Putri C14210125
+# Jeremy Andrea Soesanto C14210277
+
+
 import pygame 
 from pygame.locals import *
 import time
